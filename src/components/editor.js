@@ -3,6 +3,7 @@ import {Editor, EditorState, getDefaultKeyBinding, ContentState} from 'draft-js'
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateCard } from '../redux/action-creators/currentDeck';
+import { setCurrentCard } from '../redux/action-creators/currentCard';
 
 import { stopPropagation } from '../utils/events';
 
@@ -32,10 +33,17 @@ function getTextFromEditorState(editorState) {
 
 export default function MyEditor(props) {
 	const [editorState, setEditorState] = useState(createEditorState(props.text));
+	const { cardNumber, currentDeck } = useSelector(state => state);
 
+	const [prevCardNumber, setPrevCardNumber] = useState(cardNumber);
+	const [prevDeck, setPrevDeck] = useState(currentDeck);
 	// @desc : update editor state when text changes via new card
 	useEffect(() => {
-		setEditorState(createEditorState(props.text))
+		if(prevCardNumber !== cardNumber || prevDeck.name !== currentDeck.name) {
+			setPrevCardNumber(cardNumber);
+			setPrevDeck(currentDeck);
+			setEditorState(createEditorState(props.text));
+		}
 	}, [props.text]);
 
 	const dispatch = useDispatch();
@@ -53,6 +61,7 @@ export default function MyEditor(props) {
 			back: props.isFront ? currentCard.back : text 
 		};
 		dispatch(updateCard(currentCardNumber, updatedCard));
+		dispatch(setCurrentCard(updatedCard));
 		setEditorState(editorState);
 	}
 

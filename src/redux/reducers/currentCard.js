@@ -6,7 +6,7 @@
 */
 import { SET_CURRENT_CARD } from '../actions';
 
-export default function currentCard(state = {front: 'swag', back: 'yeet'}, action) {
+export default function currentCard(state = null, action) {
 	switch(action.type) {
 		case SET_CURRENT_CARD:
 			return action.payload;

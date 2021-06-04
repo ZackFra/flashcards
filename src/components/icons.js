@@ -1,4 +1,10 @@
-import { AiOutlineLeft, AiOutlineRight, AiOutlineLeftCircle, AiOutlineRightCircle } from 'react-icons/ai';
+import { 
+	AiOutlineLeft, 
+	AiOutlineRight, 
+	AiOutlineLeftCircle, 
+	AiOutlineRightCircle,
+	AiFillPlusCircle
+} from 'react-icons/ai';
 import './icons.css';
 
 export function FlashcardIcon(props) {
@@ -19,4 +25,8 @@ export function RightArrowCircleIcon() {
 
 export function LeftArrowCircleIcon() {
 	return <AiOutlineLeftCircle className='arrow-circle-icon' />
+}
+
+export function PlusInCircleIcon() {
+	return <AiFillPlusCircle className='plus-in-circle-icon' />
 }

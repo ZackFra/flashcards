@@ -1,4 +1,4 @@
-import { SET_DECK_NAME, UPDATE_CARD } from '../actions';
+import { SET_DECK_NAME, UPDATE_CARD, SET_CURRENT_DECK } from '../actions';
 
 const emptyDeck = {
 	name: 'Dummy Deck',
@@ -17,6 +17,9 @@ export default function currentDeck(state = emptyDeck, action) {
 	switch(action.type) {
 		case SET_DECK_NAME:
 			name = action.payload;
+			break;
+		case SET_CURRENT_DECK:
+			({ cards, name } = action.payload);
 			break;
 		case UPDATE_CARD:
 			cards[action.payload.cardNumber] = action.payload.card;
