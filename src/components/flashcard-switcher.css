@@ -1,0 +1,8 @@
+.flashcard-switcher-arrow-button {
+	border: 0;
+	background-color: transparent;
+}
+
+.flashcard-switcher-arrow-button:active {
+	opacity: 0.8;
+}

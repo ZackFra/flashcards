@@ -1,0 +1,9 @@
+.controls-bar {
+	position: fixed;
+	bottom: 0;
+	height: 20vh;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
