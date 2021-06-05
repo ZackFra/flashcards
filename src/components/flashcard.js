@@ -18,8 +18,10 @@ const styles = {
 export default function Flashcard() {
 	const [isFlipped, setFlipped] = useState(false);
 	const flip = () => setFlipped(!isFlipped);
-
-	const { currentCard } = useSelector(state => state);
+	
+	const { cardNumber, decks, deckNumber } = useSelector(state => state);
+	const currentDeck = decks[deckNumber];
+	const currentCard = currentDeck.cards[cardNumber];
 
 	return (
 		<div className='d-flex justify-content-center mt-4'>

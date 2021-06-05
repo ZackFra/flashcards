@@ -1,6 +1,6 @@
 import { INCREMENT_CARD_NUMBER, DECREMENT_CARD_NUMBER, SET_CARD_NUMBER } from '../actions';
 
-export default function currentCardNumber(state = null, action) {
+export default function cardNumber(state = null, action) {
 	switch(action.type) {
 		case INCREMENT_CARD_NUMBER:
 			return state + 1;

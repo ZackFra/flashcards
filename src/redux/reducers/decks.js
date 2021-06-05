@@ -1,21 +1,18 @@
-import { ADD_DECK, REMOVE_DECK, UPDATE_DECK } from '../actions';
-const dummyDecks = [
-	{name: 'swag', cards: []},
-	{name: 'Y33t', cards: []},
-	{name: 'ayy', cards: []},
-	{name: 'foo', cards: []}
-]
+import { INSERT_DECK, REMOVE_DECK, UPDATE_DECK, RENAME_DECK } from '../actions';
 
-export default function decks(state = dummyDecks, action) {
-	let decks;
+export default function decks(state = [], action) {
+	let decks = [...state];
 	switch(action.type) {
-		case ADD_DECK:
-			return [...state, action.payload];
+		case INSERT_DECK:
+			decks[action.payload.deckNumber] = action.payload.deck;
+			return decks;
 		case REMOVE_DECK:
-			return state.filter(deck => deck.name !== action.payload);
+			return decks.filter(deck => deck.name !== action.payload);
 		case UPDATE_DECK:
-			decks = [ ...state];
 			decks[action.payload.deckNumber].cards[action.payload.cardNumber] = action.payload.card;
+			return decks;
+		case RENAME_DECK:
+			decks[action.payload.deckNumber].name = action.payload.name;
 			return decks;
 		default:
 			return state;

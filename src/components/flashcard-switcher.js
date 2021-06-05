@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
 
-import { incrementCardNumber, decrementCardNumber } from '../redux/action-creators/currentCardNumber';
-import { setCurrentCard } from '../redux/action-creators/currentCard';
+import { incrementCardNumber, decrementCardNumber } from '../redux/action-creators/cardNumber';
+import { insertCard } from '../redux/action-creators/decks';
 
-import { LeftArrowCircleIcon, RightArrowCircleIcon } from './icons';
+import { LeftArrowCircleIcon, PlusInCircleIcon, RightArrowCircleIcon } from './icons';
 import Flashcard from './flashcard';
 
 import './flashcard-switcher.css';
@@ -17,6 +17,24 @@ function LeftArrowButton(props) {
 }
 
 function RightArrowButton(props) {
+	const { cardNumber, deckNumber, decks } = useSelector(state => state);
+	const currentDeck = decks[deckNumber];
+
+	const dispatch = useDispatch();
+	const emptyCard = { front: '', back: ''};
+	const createCard = () => {
+		dispatch(insertCard(deckNumber, cardNumber+1, emptyCard));
+		dispatch(incrementCardNumber());
+	}
+	
+	if(cardNumber === currentDeck.cards.length - 1) {
+		return (
+			<button onClick={createCard}  className='flashcard-switcher-add-card-button'>
+				<PlusInCircleIcon />
+			</button>
+		)
+	}
+
 	return (
 		<button onClick={props.onClick} className='flashcard-switcher-arrow-button'>
 			<RightArrowCircleIcon />
@@ -33,20 +51,20 @@ function hasPrevCard(cardNumber) {
 }
 
 export default function FlashcardSwitcher() {
-	const { currentDeck, currentCardNumber } = useSelector(state => state);
+	const { cardNumber, decks, deckNumber } = useSelector(state => state);
+	const currentDeck = decks[deckNumber];
+
 	const dispatch = useDispatch();
 
 	const nextCard = () => {
-		if(hasNextCard(currentCardNumber, currentDeck.cards.length)) {
+		if(hasNextCard(cardNumber, currentDeck.cards.length)) {
 			dispatch(incrementCardNumber());
-			dispatch(setCurrentCard(currentDeck.cards[currentCardNumber+1]));
 		}
 	}
 	
 	const prevCard = () => {
-		if(hasPrevCard(currentCardNumber)) {
+		if(hasPrevCard(cardNumber)) {
 			dispatch(decrementCardNumber());
-			dispatch(setCurrentCard(currentDeck.cards[currentCardNumber-1]));
 		}
 	}
 

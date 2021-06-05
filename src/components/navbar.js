@@ -1,13 +1,6 @@
-import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { setDeckModalIsVisible } from '../redux/action-creators/deckModalIsVisible';
-
 export default function Navbar() {
-	const dispatch = useDispatch();
-	function spawnDeckModal() {
-		dispatch(setDeckModalIsVisible(true));
-	}
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -15,13 +8,6 @@ export default function Navbar() {
 
 				<div className="navbar-collapse collapse">
 					<ul className="navbar-nav me-auto">
-
-						{/* button to spawn deck modal */}
-						<li className='nav-item d-flex align-items-center'>
-							<button className='btn btn-primary d-flex align-items-center' onClick={spawnDeckModal}>
-								Deck
-							</button>
-						</li>
 
 						{/* nav links */}
 						<li className="nav-item">

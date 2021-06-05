@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import {Editor, EditorState, getDefaultKeyBinding, ContentState} from 'draft-js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { updateCard } from '../redux/action-creators/currentDeck';
-import { setCurrentCard } from '../redux/action-creators/currentCard';
+import { insertCard } from '../redux/action-creators/decks';
 
 import { stopPropagation } from '../utils/events';
 
@@ -33,10 +32,14 @@ function getTextFromEditorState(editorState) {
 
 export default function MyEditor(props) {
 	const [editorState, setEditorState] = useState(createEditorState(props.text));
-	const { cardNumber, currentDeck } = useSelector(state => state);
+	const dispatch = useDispatch();
+	const { cardNumber, decks, deckNumber } = useSelector(state => state);
+	const currentDeck = decks[deckNumber];
+	const currentCard = currentDeck.cards[cardNumber];
 
 	const [prevCardNumber, setPrevCardNumber] = useState(cardNumber);
 	const [prevDeck, setPrevDeck] = useState(currentDeck);
+
 	// @desc : update editor state when text changes via new card
 	useEffect(() => {
 		if(prevCardNumber !== cardNumber || prevDeck.name !== currentDeck.name) {
@@ -46,12 +49,6 @@ export default function MyEditor(props) {
 		}
 	}, [props.text]);
 
-	const dispatch = useDispatch();
-	const { 
-		currentCard,
-		currentCardNumber
-	} = useSelector(state => state);
-
 	// @desc        : update the current card by modifying the deck
 	// @editorState : <Editor State> state after being written to
 	function updateCurrentCard(editorState) {
@@ -60,8 +57,7 @@ export default function MyEditor(props) {
 			front: props.isFront ? text : currentCard.front,
 			back: props.isFront ? currentCard.back : text 
 		};
-		dispatch(updateCard(currentCardNumber, updatedCard));
-		dispatch(setCurrentCard(updatedCard));
+		dispatch(insertCard(deckNumber, cardNumber, updatedCard));
 		setEditorState(editorState);
 	}
 

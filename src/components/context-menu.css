@@ -1,0 +1,27 @@
+.context-menu {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.context-menu-popup {
+	background-color: white;
+	color: black;
+	min-width: 100px;
+	position: fixed;
+	transform: translate(0, -100%);
+}
+
+.context-menu-item {
+	padding: 4px;
+	margin: 0;
+	border: 0;
+	width: 100%;
+	background-color: transparent;
+	display: block;
+}
+
+.context-menu-item:hover {
+	background-color:rgb(101, 101, 253);
+}

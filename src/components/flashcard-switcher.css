@@ -6,3 +6,15 @@
 .flashcard-switcher-arrow-button:active {
 	opacity: 0.8;
 }
+
+.flashcard-switcher-add-card-button {
+	border: 0;
+	background-color: transparent;
+	font-size: 3rem;
+	color: rgba(202, 202, 20, 0.959);
+	margin: 2rem;
+}
+
+.flashcard-switcher-add-card-button:active {
+	opacity: 0.8;
+}
