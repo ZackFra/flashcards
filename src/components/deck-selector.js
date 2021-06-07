@@ -6,8 +6,9 @@ import { ContextMenu, MenuOption } from './context-menu';
 import DeckOption from './deck-option';
 import { LeftArrowIcon, PlusInCircleIcon, RightArrowIcon } from './icons';
 import RenameDeckModal from './rename-deck-modal';
+import VerifyDeleteModal from './verify-delete-modal';
 
-import { insertDeck, renameDeck } from '../redux/action-creators/decks';
+import { insertDeck } from '../redux/action-creators/decks';
 
 import { getEmptyDeck } from '../utils/decks';
 
@@ -15,17 +16,32 @@ const DECKS_PER_PAGE = 3;
 
 // @desc : display up to 3 decks to be switched through
 function PaginatedDeck(props) {
-	const [show, setShow] = useState(false);
 	const [clickedDeckNumber, setClickedDeckNumber] = useState(null);
 
+	/* RenameDeckModal */
+	const [showRenameDeckModal, setShowRenameDeckModal] = useState(false);
 	const spawnRenameDeckModal = (deckNumber) => () => {
-		setShow(true);
 		setClickedDeckNumber(deckNumber);
+		setShowRenameDeckModal(true);
 	}
+
 	const hideRenameDeckModal = () => {
-		setShow(false);
+		setShowRenameDeckModal(false);
 		setClickedDeckNumber(null);
 	}
+
+	/* VerifyDeleteModal */
+	const [showVerifyDeleteModal, setShowVerifyDeleteModal] = useState(false);
+	const spawnVerifyDeleteModal = (deckNumber) => () => {
+		setClickedDeckNumber(deckNumber);
+		setShowVerifyDeleteModal(true);
+	}
+
+	const hideVerifyDeleteModal = () => {
+		setShowVerifyDeleteModal(false);
+		setClickedDeckNumber(null);
+	}
+
 
 	const decks = useSelector(state => state.decks);
 	const paginatedDecks = [];
@@ -38,7 +54,7 @@ function PaginatedDeck(props) {
 		<ContextMenu key={`deck-${i}`}>
 			<>
 				<MenuOption onClick={spawnRenameDeckModal(i)}>Rename</MenuOption>
-				<MenuOption>Swag</MenuOption>
+				<MenuOption onClick={spawnVerifyDeleteModal(i)}>Delete</MenuOption>
 			</>
 			<DeckOption deck={deck} deckNumber={i} />
 		</ContextMenu>
@@ -47,7 +63,17 @@ function PaginatedDeck(props) {
 
 	return (
 		<>
-			<RenameDeckModal show={show} onHide={hideRenameDeckModal} />
+			<VerifyDeleteModal
+				show={showVerifyDeleteModal}
+				onHide={hideVerifyDeleteModal}
+				isDeck
+				deckNumber={clickedDeckNumber}
+			/>
+			<RenameDeckModal 
+				show={showRenameDeckModal} 
+				onHide={hideRenameDeckModal} 
+				deckNumber={clickedDeckNumber} 
+			/>
 			{decksAsJSX}
 		</>
 	);
@@ -80,10 +106,7 @@ export default function DeckSelector() {
 			<PaginatedDeck index={paginationIndex} />
 
 			<Button onClick={onRightArrowClick} variant='dark'>
-				{decks.length <= paginationIndex + DECKS_PER_PAGE ? 
-					<PlusInCircleIcon /> 
-					: <RightArrowIcon />
-				}
+				{decks.length <= paginationIndex + DECKS_PER_PAGE ? <PlusInCircleIcon /> : <RightArrowIcon />}
 			</Button>
 		</>
 	)

@@ -10,6 +10,7 @@ export const SET_DECK_NUMBER = 'SET DECK NUMBER';
 
 /* decks */
 export const INSERT_DECK = 'INSERT DECK';
-export const REMOVE_DECK = 'REMOVE DECK';
 export const UPDATE_DECK = 'UPDATE DECK';
 export const RENAME_DECK = 'RENAME DECK';
+export const DELETE_DECK = 'DELETE DECK';
+export const DELETE_CARD = 'DELETE CARD';

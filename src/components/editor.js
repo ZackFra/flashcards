@@ -41,6 +41,7 @@ export default function MyEditor(props) {
 	const [prevDeck, setPrevDeck] = useState(currentDeck);
 
 	// @desc : update editor state when text changes via new card
+	// @todo : fix this to be less complicated, less dependencies, etc.
 	useEffect(() => {
 		if(prevCardNumber !== cardNumber || prevDeck.name !== currentDeck.name) {
 			setPrevCardNumber(cardNumber);

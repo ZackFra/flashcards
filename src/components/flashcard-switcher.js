@@ -69,10 +69,15 @@ export default function FlashcardSwitcher() {
 	}
 
 	return (
-		<>
-			<LeftArrowButton onClick={prevCard} />
-			<Flashcard />
-			<RightArrowButton onClick={nextCard} />
-		</>
+		<div className='flashcard-switcher-wrapper mt-4'>
+			<div className='flashcard-switcher-count'>
+				<p>[{cardNumber+1}/{currentDeck.cards.length}]</p>
+			</div>
+			<div className='flashcard-switcher-tool'>
+				<LeftArrowButton onClick={prevCard} />
+				<Flashcard />
+				<RightArrowButton onClick={nextCard} />
+			</div>
+		</div>
 	)
 }

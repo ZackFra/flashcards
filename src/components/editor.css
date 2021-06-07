@@ -1,8 +1,6 @@
 .editor-wrapper {
-	width: 90%;
-	height: 80%;
+	width: 50%;
+	height: 40%;
 	position: relative;
-	left: 5%;
-	top: 10%;
 	overflow: auto;
 }

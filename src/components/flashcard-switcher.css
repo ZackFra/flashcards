@@ -18,3 +18,20 @@
 .flashcard-switcher-add-card-button:active {
 	opacity: 0.8;
 }
+
+.flashcard-switcher-wrapper {
+	display: column;
+	grid-template-rows: 9fr 1fr;
+	height: 70vh;
+}
+
+.flashcard-switcher-tool {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.flashcard-switcher-count {
+	display: flex;
+	justify-content: flex-end;
+}

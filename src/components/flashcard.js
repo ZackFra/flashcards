@@ -24,7 +24,7 @@ export default function Flashcard() {
 	const currentCard = currentDeck.cards[cardNumber];
 
 	return (
-		<div className='d-flex justify-content-center mt-4'>
+		<div className='d-flex justify-content-center'>
 			<ReactCardFlip isFlipped={isFlipped} flipDirection='vertical'>
 
 				{/* front side */}
