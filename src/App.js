@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 
 import store from './redux/store';
 import Study from './pages/study';
+import Login from './pages/login';
 
 import 'bootswatch/dist/simplex/bootstrap.min.css';
 
@@ -15,7 +16,7 @@ function App() {
             <Redirect to='/study' />
           </Route>
           <Route exact path='/login'>
-
+            <Login />
           </Route>
           <Route exact path='/study'>
             <Study />

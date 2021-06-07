@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button } from 'react-bootstrap';
 
-import { incrementCardNumber, decrementCardNumber } from '../redux/action-creators/cardNumber';
-import { insertCard } from '../redux/action-creators/decks';
+import { incrementCardNumber, decrementCardNumber, setCardNumber } from 'redux/action-creators/cardNumber';
+import { insertCard, deleteCard } from 'redux/action-creators/decks';
 
-import { LeftArrowCircleIcon, PlusInCircleIcon, RightArrowCircleIcon } from './icons';
-import Flashcard from './flashcard';
+import { LeftArrowCircleIcon, PlusInCircleIcon, RightArrowCircleIcon, DeleteIcon } from './icons/icons';
+import Flashcard from './flashcard-components/flashcard';
 
 import './flashcard-switcher.css';
+import VerifyDeleteModal from './modals/verify-delete-modal';
 
 function LeftArrowButton(props) {
 	return (
@@ -56,6 +59,8 @@ export default function FlashcardSwitcher() {
 
 	const dispatch = useDispatch();
 
+	/* for moving through a deck's cards */
+	
 	const nextCard = () => {
 		if(hasNextCard(cardNumber, currentDeck.cards.length)) {
 			dispatch(incrementCardNumber());
@@ -68,10 +73,33 @@ export default function FlashcardSwitcher() {
 		}
 	}
 
+	/* card deletion */
+	const [showVerifyModal, setShowVerifyModal] = useState(false);
+
+	const spawnVerify = () => setShowVerifyModal(true);
+	const hideVerify = () => setShowVerifyModal(false);
+
+	const deleteThisCard = () => {
+		if(currentDeck.cards.length === 1) {
+			dispatch(setCardNumber(null));
+		} else if(currentDeck.cards.length-1 === cardNumber) {
+			dispatch(decrementCardNumber());
+		}
+		dispatch(deleteCard(deckNumber, cardNumber));
+	}
+
 	return (
 		<div className='flashcard-switcher-wrapper mt-4'>
-			<div className='flashcard-switcher-count'>
-				<p>[{cardNumber+1}/{currentDeck.cards.length}]</p>
+			<VerifyDeleteModal show={showVerifyModal} onVerify={deleteThisCard} onHide={hideVerify} />
+			<div className='flashcard-switcher-top-formatter'>
+				<div className='flashcard-switcher-control'>
+					<Button variant='danger' onClick={spawnVerify}>
+						<DeleteIcon />
+					</Button>
+				</div>
+				<p className='text-dark d-flex justify-content-end m-0'>
+					[{cardNumber+1}/{currentDeck.cards.length}]
+				</p>
 			</div>
 			<div className='flashcard-switcher-tool'>
 				<LeftArrowButton onClick={prevCard} />

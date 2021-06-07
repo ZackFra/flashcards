@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import {Editor, EditorState, getDefaultKeyBinding, ContentState} from 'draft-js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { insertCard } from '../redux/action-creators/decks';
+import { insertCard } from 'redux/action-creators/decks';
 
-import { stopPropagation } from '../utils/events';
+import { stopPropagation } from 'utils/events';
 
 import 'draft-js/dist/Draft.css';
 import './editor.css';

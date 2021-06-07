@@ -3,7 +3,8 @@ import {
 	AiOutlineRight, 
 	AiOutlineLeftCircle, 
 	AiOutlineRightCircle,
-	AiFillPlusCircle
+	AiFillPlusCircle,
+	AiFillDelete
 } from 'react-icons/ai';
 import './icons.css';
 
@@ -29,4 +30,8 @@ export function LeftArrowCircleIcon() {
 
 export function PlusInCircleIcon() {
 	return <AiFillPlusCircle className='plus-in-circle-icon' />
+}
+
+export function DeleteIcon() {
+	return <AiFillDelete className='delete-icon' /> 
 }

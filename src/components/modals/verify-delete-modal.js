@@ -1,17 +1,10 @@
 import { Modal, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 
-import { deleteDeck, deleteCard } from '../redux/action-creators/decks';
-
 export default function VerifyDeleteModal(props) {
-	const dispatch = useDispatch();
 
 	const deleteFunc = () => {
-		if(props.isDeck) {
-			dispatch(deleteDeck(props.deckNumber));
-		} else {
-			dispatch(deleteCard(props.deckNumber, props.cardNumber));
-		}
+		props.onVerify();
 		props.onHide();
 	}
 	

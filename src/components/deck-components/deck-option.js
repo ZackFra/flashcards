@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
 
-import { setCardNumber } from '../redux/action-creators/cardNumber';
-import { setDeckNumber } from '../redux/action-creators/deckNumber';
+import { setCardNumber } from 'redux/action-creators/cardNumber';
+import { setDeckNumber } from 'redux/action-creators/deckNumber';
 
-import { FlashcardIcon } from './icons';
+import { FlashcardIcon } from 'components/icons/icons';
 import './deck-option.css';
 
 export default function DeckOption({deck, deckNumber}) {

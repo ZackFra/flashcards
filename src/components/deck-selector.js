@@ -2,21 +2,24 @@ import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 
-import { ContextMenu, MenuOption } from './context-menu';
-import DeckOption from './deck-option';
-import { LeftArrowIcon, PlusInCircleIcon, RightArrowIcon } from './icons';
-import RenameDeckModal from './rename-deck-modal';
-import VerifyDeleteModal from './verify-delete-modal';
+import { ContextMenu, MenuOption } from './utils/context-menu';
+import DeckOption from './deck-components/deck-option';
+import { LeftArrowIcon, PlusInCircleIcon, RightArrowIcon } from 'components/icons/icons';
+import RenameDeckModal from './modals/rename-deck-modal';
+import VerifyDeleteModal from './modals/verify-delete-modal';
 
-import { insertDeck } from '../redux/action-creators/decks';
+import { insertDeck, deleteDeck } from 'redux/action-creators/decks';
+import { setCardNumber } from 'redux/action-creators/cardNumber';
+import { setDeckNumber } from 'redux/action-creators/deckNumber';
 
-import { getEmptyDeck } from '../utils/decks';
+import { getEmptyDeck } from 'utils/decks';
 
 const DECKS_PER_PAGE = 3;
 
 // @desc : display up to 3 decks to be switched through
 function PaginatedDeck(props) {
 	const [clickedDeckNumber, setClickedDeckNumber] = useState(null);
+	const dispatch = useDispatch();
 
 	/* RenameDeckModal */
 	const [showRenameDeckModal, setShowRenameDeckModal] = useState(false);
@@ -32,6 +35,7 @@ function PaginatedDeck(props) {
 
 	/* VerifyDeleteModal */
 	const [showVerifyDeleteModal, setShowVerifyDeleteModal] = useState(false);
+	
 	const spawnVerifyDeleteModal = (deckNumber) => () => {
 		setClickedDeckNumber(deckNumber);
 		setShowVerifyDeleteModal(true);
@@ -40,6 +44,18 @@ function PaginatedDeck(props) {
 	const hideVerifyDeleteModal = () => {
 		setShowVerifyDeleteModal(false);
 		setClickedDeckNumber(null);
+	}
+
+	// callback function for when the verify modal is complete
+	// delete the deck, and clear the cardNumber and deckNumber
+	// if necessary
+	const deckNumber = useSelector(state => state.deckNumber);
+	const onVerify = () => {
+		dispatch(deleteDeck(clickedDeckNumber));
+		if(clickedDeckNumber === deckNumber) {
+			dispatch(setCardNumber(null));
+			dispatch(setDeckNumber(null));
+		}
 	}
 
 
@@ -66,6 +82,7 @@ function PaginatedDeck(props) {
 			<VerifyDeleteModal
 				show={showVerifyDeleteModal}
 				onHide={hideVerifyDeleteModal}
+				onVerify={onVerify}
 				isDeck
 				deckNumber={clickedDeckNumber}
 			/>

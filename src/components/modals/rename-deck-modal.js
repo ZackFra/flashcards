@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { renameDeck } from '../redux/action-creators/decks';
+import { renameDeck } from '../../redux/action-creators/decks';
 
 export default function RenameDeckModal(props) {
 	const decks = useSelector(state => state.decks);;
@@ -10,10 +10,13 @@ export default function RenameDeckModal(props) {
 	const currentDeck = decks[props.deckNumber];
 	const [tempName, setTempName] = useState(currentDeck?.name)
 	const onChange = (e) => setTempName(e.target.value);
-	const saveName = () => dispatch(renameDeck(props.deckNumber, tempName));
 	const onHide = () => {
 		setTempName("");
 		props.onHide();
+	}
+	const saveName = () => { 
+		dispatch(renameDeck(props.deckNumber, tempName));
+		onHide();
 	}
 	const onShow = () => setTempName(currentDeck?.name);
 	

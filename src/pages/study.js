@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-import Navbar from '../components/navbar';
-import Controls from '../components/controls';
-import FlashcardSwitcher from '../components/flashcard-switcher';
+import Navbar from 'components/navbar';
+import Controls from 'components/controls';
+import FlashcardSwitcher from 'components/flashcard-switcher';
 
-import { PlusInCircleIcon } from '../components/icons';
-import { insertCard } from '../redux/action-creators/decks';
+import { PlusInCircleIcon } from 'components/icons/icons';
+import { insertCard } from 'redux/action-creators/decks';
 
 import './study.css';
-import { setCardNumber } from '../redux/action-creators/cardNumber';
+import { setCardNumber } from 'redux/action-creators/cardNumber';
 
 function PageBody() {
 	const { deckNumber, cardNumber } = useSelector(state => state);
