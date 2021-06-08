@@ -48,7 +48,8 @@ export default function MyEditor(props) {
 	},
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	[props.isFront, cardNumber, deckNumber, currentDeck.cards.length]);
-	/* NOTE: cannot include currentCard.front or currentCard.back in the
+	/* 
+	 * NOTE: cannot include currentCard.front or currentCard.back in the
 	 * dependency array because they change on every keystroke. 
 	 */
 
