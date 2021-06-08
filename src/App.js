@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import store from './redux/store';
 import Study from './pages/study';
 import Login from './pages/login';
+import Signup from './pages/signup';
 
 import 'bootswatch/dist/simplex/bootstrap.min.css';
 
@@ -20,6 +21,9 @@ function App() {
           </Route>
           <Route exact path='/study'>
             <Study />
+          </Route>
+          <Route exact path='/signup'>
+            <Signup />
           </Route>
 
           <Route>

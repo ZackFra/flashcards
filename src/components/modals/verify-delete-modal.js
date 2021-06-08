@@ -1,5 +1,4 @@
 import { Modal, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 
 export default function VerifyDeleteModal(props) {
 

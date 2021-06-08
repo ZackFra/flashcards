@@ -37,18 +37,20 @@ export default function MyEditor(props) {
 	const currentDeck = decks[deckNumber];
 	const currentCard = currentDeck.cards[cardNumber];
 
-	const [prevCardNumber, setPrevCardNumber] = useState(cardNumber);
-	const [prevDeck, setPrevDeck] = useState(currentDeck);
-
-	// @desc : update editor state when text changes via new card
-	// @todo : fix this to be less complicated, less dependencies, etc.
+	// @desc : update editor state when the card number changes, the
+	//       : deck number changes, or the number of cards in the deck
+	//       : changes.
 	useEffect(() => {
-		if(prevCardNumber !== cardNumber || prevDeck.name !== currentDeck.name) {
-			setPrevCardNumber(cardNumber);
-			setPrevDeck(currentDeck);
-			setEditorState(createEditorState(props.text));
+		if(deckNumber !== null && cardNumber !== null) {
+			const text = (props.isFront) ? currentCard.front : currentCard.back;
+			setEditorState(createEditorState(text));
 		}
-	}, [props.text]);
+	},
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	[props.isFront, cardNumber, deckNumber, currentDeck.cards.length]);
+	/* NOTE: cannot include currentCard.front or currentCard.back in the
+	 * dependency array because they change on every keystroke. 
+	 */
 
 	// @desc        : update the current card by modifying the deck
 	// @editorState : <Editor State> state after being written to
