@@ -1,0 +1,17 @@
+.navbar-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	width: 100%;
+}
+
+.navbar-left {
+	margin-right: auto;
+}
+
+.navbar-right {
+	margin-left: auto;
+}
+
+.navbar-username {
+	margin-right: 1rem;
+}

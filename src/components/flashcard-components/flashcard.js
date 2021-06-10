@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReactCardFlip from 'react-card-flip';
 
@@ -15,9 +14,7 @@ const styles = {
 	}
 }
 
-export default function Flashcard() {
-	const [isFlipped, setFlipped] = useState(false);
-	const flip = () => setFlipped(!isFlipped);
+export default function Flashcard(props) {
 	
 	const { cardNumber, decks, deckNumber } = useSelector(state => state);
 	const currentDeck = decks[deckNumber];
@@ -25,15 +22,15 @@ export default function Flashcard() {
 
 	return (
 		<div className='d-flex justify-content-center'>
-			<ReactCardFlip isFlipped={isFlipped} flipDirection='vertical'>
+			<ReactCardFlip isFlipped={props.isFlipped} flipDirection='vertical'>
 
 				{/* front side */}
-				<div style={styles.content} onClick={flip}>
+				<div style={styles.content} onClick={props.flip}>
 					<Editor isFront text={currentCard.front} />
 				</div>
 
 				{/* back side */}
-				<div style={styles.content} onClick={flip}>
+				<div style={styles.content} onClick={props.flip}>
 					<Editor text={currentCard.back} />
 				</div>
 			</ReactCardFlip>

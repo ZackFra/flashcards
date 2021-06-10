@@ -25,11 +25,15 @@ function RightArrowButton(props) {
 
 	const dispatch = useDispatch();
 	const emptyCard = { front: '', back: ''};
+
+	// @desc : call the onCreate meta-function, then insert a card into the deck
 	const createCard = () => {
+		props.onCreate?.();
 		dispatch(insertCard(deckNumber, cardNumber+1, emptyCard));
 		dispatch(incrementCardNumber());
 	}
 	
+	// if we're at the last card in the deck, present the create button
 	if(cardNumber === currentDeck.cards.length - 1) {
 		return (
 			<button onClick={createCard}  className='flashcard-switcher-add-card-button'>
@@ -38,6 +42,7 @@ function RightArrowButton(props) {
 		)
 	}
 
+	// present the "next" button otherwise
 	return (
 		<button onClick={props.onClick} className='flashcard-switcher-arrow-button'>
 			<RightArrowCircleIcon />
@@ -59,16 +64,26 @@ export default function FlashcardSwitcher() {
 
 	const dispatch = useDispatch();
 
+	// state variable for flipping cards when needed
+	const [isFlipped, setIsFlipped] = useState(false);
+	const flip = () => setIsFlipped(!isFlipped);
+
 	/* for moving through a deck's cards */
 	
 	const nextCard = () => {
 		if(hasNextCard(cardNumber, currentDeck.cards.length)) {
+			setIsFlipped(false);
 			dispatch(incrementCardNumber());
 		}
+	}
+
+	const onCreate = () => {
+		setIsFlipped(false);
 	}
 	
 	const prevCard = () => {
 		if(hasPrevCard(cardNumber)) {
+			setIsFlipped(false);
 			dispatch(decrementCardNumber());
 		}
 	}
@@ -103,8 +118,8 @@ export default function FlashcardSwitcher() {
 			</div>
 			<div className='flashcard-switcher-tool'>
 				<LeftArrowButton onClick={prevCard} />
-				<Flashcard />
-				<RightArrowButton onClick={nextCard} />
+				<Flashcard isFlipped={isFlipped} flip={flip} />
+				<RightArrowButton onClick={nextCard} onCreate={onCreate} />
 			</div>
 		</div>
 	)

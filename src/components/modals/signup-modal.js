@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import { Auth } from 'aws-amplify';
 
 const MESSAGE_TYPES = {
 	NONE: 0,
@@ -15,37 +16,79 @@ function isSuccess(code) {
 	return code === MESSAGE_TYPES.SUCCESS;
 }
 
+const emptyState = {
+	email: '',
+	username: '',
+	password: '',
+	confirm: '',
+	message: {content: '', type: MESSAGE_TYPES.NONE }
+}
+
 export default function SignUpModal(props) {
-	const [state, setState] = useState({
-		username: '',
-		password: '',
-		confirm: '',
-		message: {content: '', type: MESSAGE_TYPES.NONE }
-	});
+	const [state, setState] = useState(emptyState);
 
 	// @desc : onChange handler for inputs
 	const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
 	
 	// @desc : make API request to finish account creation, set message based on success
 	//       : or failure
-	const onSubmit = (e) => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		// TODO: make API request
-		setState({...state, message: {content: 'Account Created!', type: MESSAGE_TYPES.SUCCESS}});
+
+		// default to type being error, will change
+		// to SUCCESS upon well... success
+		let content, type = MESSAGE_TYPES.ERROR;
+		if(password !== confirm) {
+			content = 'Passwords do not match';
+		} else if(email.length === 0) {
+			content = 'Email cannot be blank'
+		} else {
+			try {
+				// TODO : verify email is valid
+				await Auth.signUp({
+					username,
+					password,
+					attributes: {
+						email
+					}
+				});
+				content = 'Account created!';
+				type = MESSAGE_TYPES.SUCCESS;
+			} catch(err) {
+				if(err.message) {
+					content = err.message;
+				} else {
+					content = 'Unexpected error';
+				}
+			}
+		}
+
+		setState({...state, message: { content, type }});
 	}
 
 	// @desc : reset the state, close the modal
 	const onHide = () => {
-		setState({
-			username: '', 
-			password: '', 
-			confirm: '', 
-			message: {content: '', type: MESSAGE_TYPES.NONE}
-		});
+		setState(emptyState);
 		props.onHide();
 	}
 
-	const { username, password, confirm, message } = state; 
+	const SuccessAlert = () => (
+		<>
+			<Alert variant='info'>
+				Check your email for a confirmation link.
+				When you are finished, you can <Button onClick={onHide} variant='link' className='p-0'>log in</Button>.
+			</Alert>
+			<Alert variant='success'>
+				{message.content}
+			</Alert>
+		</>
+	)
+
+	const FailAlert = () => (
+		<Alert variant='danger'>{message.content}</Alert>
+	)
+
+	const { email, username, password, confirm, message } = state; 
 	return (
 		<Modal show={props.show}>
 			<Modal.Header>
@@ -53,10 +96,20 @@ export default function SignUpModal(props) {
 			</Modal.Header>
 
 			<Modal.Body>
-				{isSuccess(message.type) ? <Alert variant='success'>{message.content}</Alert> : undefined}
-				{isError(message.type) ? <Alert variant='danger'>{message.content}</Alert> : undefined}
+				{isSuccess(message.type) ? <SuccessAlert /> : undefined}
+				{isError(message.type) ? <FailAlert /> : undefined}
 				<Form onSubmit={onSubmit}>
-					<Form.Group controlId='signup-username' className='mt-2'>
+					<Form.Group controlId='signup-email' className='mt-2'>
+						<Form.Label>Email</Form.Label>
+						<Form.Control 
+							type='email'
+							name='email'
+							onChange={onChange}
+							value={email} 
+							placeholder='Enter email...' 
+						/>
+					</Form.Group>
+					<Form.Group controlId='signup-username' className='mt-4'>
 						<Form.Label>Username</Form.Label>
 						<Form.Control 
 							type='username'
