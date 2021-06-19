@@ -23,7 +23,11 @@ export default function ForgotPassword() {
 			setError({message: '', status: false});
 			setSent(true);
 		} catch(err) {
-			setError({message: err.message, status: true });
+			if(err.message === 'Username cannot be empty') {
+				setError({message: 'Email cannot be blank', status: true});
+			} else {
+				setError({message: err.message, status: true });
+			}
 		}
 	}
 
@@ -32,7 +36,8 @@ export default function ForgotPassword() {
 			{error.message}
 		</Alert>
 	)
-
+	
+	// redirect to /forgot-password-verification on success
 	if(sent) {
 		return <Redirect to='/forgot-password-verification' />
 	}
