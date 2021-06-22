@@ -1,4 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { isNull } from 'lodash';
+import { useEffect } from 'react';
 
 import Navbar from 'components/navbar';
 import Controls from 'components/controls';
@@ -9,11 +11,13 @@ import { insertCard } from 'redux/action-creators/decks';
 
 import './study.css';
 import { setCardNumber } from 'redux/action-creators/cardNumber';
+import { getDeck } from 'api';
 
 export default function Study() {
-	const { deckNumber, cardNumber } = useSelector(state => state);
+	const { deckNumber, cardNumber, user } = useSelector(state => state);
+	const username = useSelector(state => state.user?.data?.username || null);
 	const deckSelected = deckNumber !== null;
-	const hasCard = cardNumber !== null;
+	const hasCard = !isNull(cardNumber);
 
 	const dispatch = useDispatch();
 
@@ -23,6 +27,15 @@ export default function Study() {
 		dispatch(insertCard(deckNumber, 0, emptyCard));
 		dispatch(setCardNumber(0));
 	}
+
+	// get the user's deck
+	useEffect(() => {
+		if(user.isAuth) {
+			getDeck(username)
+			.then(console.log)
+			.catch(console.error)
+		}
+	}, [user.isAuth, username])
 
 	// set the body to be appropriate
 	// if there's a selected deck and there's a card selected, render the flashcard switcher

@@ -27,7 +27,7 @@ export default function LoginPage() {
 	const [state, setState] = useState({
 		username: '',
 		password: '',
-		showModal: '',
+		showModal: false,
 		message: {content: '', type: MESSAGE_TYPES.NONE }
 	});
 	const { username, password, showModal, message } = state;
