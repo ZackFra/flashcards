@@ -1,8 +1,4 @@
-import { useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-
-import { logout } from 'utils/user';
 
 export default function FailedToLoadModal(props) {
 
@@ -10,26 +6,26 @@ export default function FailedToLoadModal(props) {
 		props.onHide();
 	}
 
-	const dispatch = useDispatch();
+	const tryAgain = () => {
+		props.onHide();
+		props.save();
+	}
 
-	useEffect(() => {
-		if(props.show) {
-			logout(dispatch);
-		}
-	}, [dispatch, props.show])
-	
 	return (
 		<Modal show={props.show}>
 			<Modal.Header>
-				<Modal.Title>{props.dataName} failed to load.</Modal.Title>
+				<Modal.Title>{props.failedData} failed to save.</Modal.Title>
 			</Modal.Header>
 
 			<Modal.Body>
-				User has been logged out.
+				Try again?
 			</Modal.Body>
 
 			<Modal.Footer>
 				<Button variant='primary' onClick={hideModal}>
+					Cancel
+				</Button>
+				<Button variant='secondary' onClick={tryAgain}>
 					Ok
 				</Button>
 			</Modal.Footer>

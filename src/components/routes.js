@@ -24,8 +24,9 @@ export default function Routes() {
 				dispatch(loginUser(user));
 			} catch(err) {
 				// no user, carry on
+			} finally {
+				setIsAuthenticating(false);
 			}
-			setIsAuthenticating(false);
 		}
 
 		authenticate();

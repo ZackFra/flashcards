@@ -8,6 +8,7 @@ import {
 	AiFillSave
 } from 'react-icons/ai';
 import {
+	GiCardDiscard,
 	GiCardRandom,
 } from 'react-icons/gi';
 import './icons.css';
@@ -46,4 +47,8 @@ export function SaveIcon() {
 
 export function ShuffleIcon() {
 	return <GiCardRandom className='shuffle-icon' />
+}
+
+export function RemoveIcon() {
+	return <GiCardDiscard className='remove-icon' />
 }

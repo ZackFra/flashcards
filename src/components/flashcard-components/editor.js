@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isNull } from 'lodash';
 
@@ -37,9 +37,11 @@ export default function MyEditor(props) {
 		dispatch(putCard(deckNumber, cardNumber, updatedCard));
 	}
 
+	const id = useMemo(() => props.isFront ? 'flashcard-front' : 'flashcard-back', [props.isFront])
+
 	return (
 		<div className='editor-wrapper' onClick={stopPropagation}>
-			<textarea className='editor-textarea' value={text} onChange={updateCurrentCard} />
+			<textarea id={id}className='editor-textarea' value={text} onChange={updateCurrentCard} />
 		</div>
 	);
 }

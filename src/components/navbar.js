@@ -1,56 +1,50 @@
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { isNull } from 'lodash';
 
-import { logout } from 'utils/user';
-import { SaveIcon, ShuffleIcon } from 'components/icons/icons';
+import { SaveIcon, ShuffleIcon, RemoveIcon } from 'components/icons/icons';
 import { putDecks } from 'api';
 import SavingDataModal from 'components/modals/saving-data-modal';
 import { shuffleDeck } from 'redux/action-creators/decks';
 import { setCardNumber } from 'redux/action-creators/cardNumber';
+import FailedToSaveModal from 'components/modals/failed-to-save-modal';
+import LoginLogoutLink from 'components/login-logout-link';
+import store from 'redux/store';
 import './navbar.css'
-
-
-const LoginLogoutLink = () => {
-	const user = useSelector(state => state.user);
-	const dispatch = useDispatch();
-
-	const logoutBtn = useMemo(() => {
-		const onLogout = () => logout(dispatch);
-		return <Button onClick={onLogout} variant='primary' className='nav-link'>Logout</Button> 
-	}, [dispatch]);
-
-	const loginLink = useMemo(() => { 
-		return <Link className="nav-link btn btn-primary" to='/login'>Login</Link>
-	}, [])
-	
-	const [btn, setBtn] = useState(user.isAuth ? logoutBtn : loginLink)
-
-	useEffect(() => {
-		setBtn(user.isAuth ? logoutBtn : loginLink);
-	}, [user.isAuth, logoutBtn, loginLink])
-
-	return btn;
-}
 
 export default function Navbar() {
 
 	const [showSaving, setShowSaving] = useState(false);
-	const decks = useSelector(state => state.decks);
-	const user = useSelector(state => state.user);
-	const deckNumber = useSelector(state => state.deckNumber);
-	const cardNumber = useSelector(state => state.cardNumber);
+	const { user, deckNumber, cardNumber, decks } = useSelector(state => state);
 	const dispatch = useDispatch();
+
+	const [showFailure, setShowFailure] = useState(false);
+	const hideFailModal = () => setShowFailure(false);
+
+	// temporarily removed cards
+	const [removedCards, setRemovedCards] = useState([]);
+	const removeCurrentCard = () => {
+		const currentCard = decks[deckNumber].cards[cardNumber];
+		setRemovedCards([...removedCards, currentCard]);
+	}
 	
 	// @desc : flash a modal on the screen while saving, save, then remove the modal
 	const save = async () => {
+		// grab decks directly to avoid old decks value being used
+		const { decks } = store.getState()
 		setShowSaving(true);
-		await putDecks(decks);
-		setShowSaving(false);
+		try {
+			await putDecks(decks);
+		} catch(err) {
+			setShowFailure(true);	
+		} finally {
+			setShowSaving(false);
+		}
 	}
 
+	// @desc : shuffle a deck
 	const shuffle = () => {
 		if(!isNull(deckNumber) && !isNull(cardNumber)) {
 			dispatch(shuffleDeck(deckNumber));
@@ -58,9 +52,22 @@ export default function Navbar() {
 		}
 	}
 
+	// @desc : setup key handler for saving
+	useEffect(() => {
+		const handleKeyPress = async (e) => {
+			if(e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && user.isAuth) {
+				e.preventDefault();
+				await save();
+			}
+		}
+		document.addEventListener('keydown', handleKeyPress);
+		return () => document.removeEventListener('keydown', handleKeyPress);
+	}, [user.isAuth])
+
 	// only show save button for authorized users
 	let saveButton = undefined;
 	let studyButton = undefined;
+	let removeButton = undefined;
 	if(user.isAuth) {
 		saveButton = (
 			<li className='nav-item navbar-left-item'>
@@ -77,11 +84,20 @@ export default function Navbar() {
 				</Button>
 			</li>
 		)
+
+		removeButton = (
+			<li className='nav-item navbar-left-item'>
+				<Button variant='primary' className='w-100 h-100' onClick={removeCurrentCard}>
+					<RemoveIcon />
+				</Button>
+			</li>
+		)
 	}
 
 	return (
 		<>
 			<SavingDataModal dataName='decks' show={showSaving} />
+			<FailedToSaveModal dataName='decks' show={showFailure} save={save} onHide={hideFailModal} />
 			<nav className="navbar navbar-expand-sm navbar-dark bg-primary">
 				<div className="container-fluid">
 
@@ -90,6 +106,7 @@ export default function Navbar() {
 							{/* nav links */}
 							{saveButton}
 							{studyButton}
+							{removeButton}
 							<li className="nav-item navbar-left-item"> 
 								<Link className={`nav-link ${user.isAuth ? 'disabled' : ''}`} to='/'>Home</Link>
 							</li>
