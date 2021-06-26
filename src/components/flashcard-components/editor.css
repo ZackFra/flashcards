@@ -17,3 +17,7 @@
 .editor-textarea:focus {
 	outline: none;
 }
+
+.editor-textarea:hover {
+	cursor:text !important;
+}

@@ -90,8 +90,8 @@ export default function Navbar() {
 							{/* nav links */}
 							{saveButton}
 							{studyButton}
-							<li className="nav-item navbar-left-item">
-								<Link className="nav-link" to='/'>Home</Link>
+							<li className="nav-item navbar-left-item"> 
+								<Link className={`nav-link ${user.isAuth ? 'disabled' : ''}`} to='/'>Home</Link>
 							</li>
 						</ul>
 
