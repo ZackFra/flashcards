@@ -1,6 +1,6 @@
-import { UPDATE_DECK, INSERT_DECK, RENAME_DECK, DELETE_DECK, DELETE_CARD} from '../actions';
+import { UPDATE_DECK, INSERT_DECK, RENAME_DECK, DELETE_DECK, DELETE_CARD, SET_DECKS, SHUFFLE_DECK } from '../actions';
 
-export function insertCard(deckNumber, cardNumber, card) {
+export function putCard(deckNumber, cardNumber, card) {
 	return { type: UPDATE_DECK, payload: { deckNumber, cardNumber, card } };
 }
 
@@ -18,4 +18,12 @@ export function deleteDeck(deckNumber) {
 
 export function deleteCard(deckNumber, cardNumber) {
 	return { type: DELETE_CARD, payload: {deckNumber, cardNumber} };
+}
+
+export function shuffleDeck(deckNumber) {
+	return { type: SHUFFLE_DECK, payload: { deckNumber } }
+}
+
+export function setDecks(decks) {
+	return { type: SET_DECKS, payload: { decks } };
 }

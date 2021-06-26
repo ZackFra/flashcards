@@ -61,8 +61,6 @@ export default function LoginPage() {
 				setState({...state, message: failMessage });
 			}
 		}
-
-		e.preventDefault();
 	}
 
 	// @desc : generate an alert when a login attempt fails

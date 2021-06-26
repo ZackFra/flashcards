@@ -18,3 +18,5 @@ export const UPDATE_DECK = 'UPDATE DECK';
 export const RENAME_DECK = 'RENAME DECK';
 export const DELETE_DECK = 'DELETE DECK';
 export const DELETE_CARD = 'DELETE CARD';
+export const SET_DECKS = 'SET DECKS';
+export const SHUFFLE_DECK = 'SHUFFLE DECK';

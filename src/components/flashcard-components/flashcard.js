@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import ReactCardFlip from 'react-card-flip';
-
 import Editor from './editor';
 
 import './flashcard.css';

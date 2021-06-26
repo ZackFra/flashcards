@@ -1,8 +1,16 @@
-import { INSERT_DECK, DELETE_DECK, UPDATE_DECK, RENAME_DECK, DELETE_CARD } from '../actions';
+import { INSERT_DECK, DELETE_DECK, UPDATE_DECK, RENAME_DECK, DELETE_CARD, SET_DECKS, SHUFFLE_DECK } from '../actions';
+import { shuffle } from 'lodash';
+
 
 export default function decks(state = [], action) {
 	let decks = [...state];
 	switch(action.type) {
+		case SHUFFLE_DECK:
+			decks[action.payload.deckNumber].cards = shuffle(decks[action.payload.deckNumber].cards);
+			return decks;
+		case SET_DECKS:
+			decks = action.payload.decks;
+			return decks;
 		case INSERT_DECK:
 			decks[action.payload.deckNumber] = action.payload.deck;
 			return decks;

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
 
 import { incrementCardNumber, decrementCardNumber, setCardNumber } from 'redux/action-creators/cardNumber';
-import { insertCard, deleteCard } from 'redux/action-creators/decks';
+import { putCard, deleteCard } from 'redux/action-creators/decks';
 
 import { LeftArrowCircleIcon, PlusInCircleIcon, RightArrowCircleIcon, DeleteIcon } from './icons/icons';
 import Flashcard from './flashcard-components/flashcard';
@@ -29,7 +29,7 @@ function RightArrowButton(props) {
 	// @desc : call the onCreate meta-function, then insert a card into the deck
 	const createCard = () => {
 		props.onCreate?.();
-		dispatch(insertCard(deckNumber, cardNumber+1, emptyCard));
+		dispatch(putCard(deckNumber, cardNumber+1, emptyCard));
 		dispatch(incrementCardNumber());
 	}
 	

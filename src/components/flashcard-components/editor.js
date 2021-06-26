@@ -1,78 +1,75 @@
-import { useEffect, useState } from 'react';
-import {Editor, EditorState, getDefaultKeyBinding, ContentState} from 'draft-js';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isNull } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
-import { insertCard } from 'redux/action-creators/decks';
+import { putCard } from 'redux/action-creators/decks';
 
 import { stopPropagation } from 'utils/events';
-
-import 'draft-js/dist/Draft.css';
 import './editor.css';
 
-// @desc   : return 'not-handled' so default key binding always used
-// @return : <string>
-function handleKeyCommand() {
-	return 'not-handled';
+function setSelectionRange(input, selectionStart, selectionEnd) {
+    if (input.setSelectionRange) {
+        input.focus();
+        input.setSelectionRange(selectionStart, selectionEnd);
+    }
+    else if (input.createTextRange) {
+        var range = input.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', selectionEnd);
+        range.moveStart('character', selectionStart);
+        range.select();
+    }
 }
 
-// @desc   : create an editor state containing text
-// @text   : <string>
-// @return : <func> callback that returns the editor state
-function createEditorState(text) {
-	const contentState = ContentState.createFromText(text);
-	const editorState = EditorState.createWithContent(contentState);
-	return () => editorState;
-}
-
-// @desc        : return the raw text from an editor state
-// @editorState : <Editor State>
-function getTextFromEditorState(editorState) {
-	return editorState.getCurrentContent().getPlainText();
+function setCaretToPos (input, pos) {
+       setSelectionRange(input, pos, pos);
 }
 
 export default function MyEditor(props) {
-	const [editorState, setEditorState] = useState(createEditorState(props.text));
 	const dispatch = useDispatch();
 	const { cardNumber, decks, deckNumber } = useSelector(state => state);
 	const currentDeck = decks[deckNumber];
 	const currentCard = currentDeck.cards[cardNumber];
+	const [text, setText] = useState(props.text);
+	const [cursorPos, setCursorPos] = useState(0);
+	const [element, setElement] = useState(null);
+	const [id] = useState(uuid());
 
 	// @desc : update editor state when the card number changes, the
 	//       : deck number changes, or the number of cards in the deck
 	//       : changes.
 	useEffect(() => {
-		if(deckNumber !== null && cardNumber !== null) {
-			const text = (props.isFront) ? currentCard.front : currentCard.back;
-			setEditorState(createEditorState(text));
+		if(!isNull(cardNumber) && !isNull(deckNumber)) {
+			setText(props.text);
+			if(element) {
+				setCaretToPos(element, cursorPos);
+			}
 		}
-	},
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	[props.isFront, cardNumber, deckNumber, currentDeck.cards.length]);
-	/* 
-	 * NOTE: cannot include currentCard.front or currentCard.back in the
-	 * dependency array because they change on every keystroke. 
-	 */
+	}, [cardNumber, deckNumber, props.text]);
+
+	// @desc : set the textarea element
+	useLayoutEffect(() => {
+		setElement(document.getElementById(id));
+	}, []);
 
 	// @desc        : update the current card by modifying the deck
 	// @editorState : <Editor State> state after being written to
-	function updateCurrentCard(editorState) {
-		const text = getTextFromEditorState(editorState);
+	function updateCurrentCard(e) {
+		const updatedText = e.target.value;
+		setCursorPos(element.selectionStart);
+		console.log(element.selectionStart);
 		const updatedCard = { 
-			front: props.isFront ? text : currentCard.front,
-			back: props.isFront ? currentCard.back : text 
+			front: props.isFront ? updatedText : currentCard.front,
+			back: props.isFront ? currentCard.back : updatedText 
 		};
-		dispatch(insertCard(deckNumber, cardNumber, updatedCard));
-		setEditorState(editorState);
+		dispatch(putCard(deckNumber, cardNumber, updatedCard));
+		// no need for setText, the useEffect handles that
 	}
 
 	return (
 		<div className='editor-wrapper' onClick={stopPropagation}>
-			<Editor 
-				editorState={editorState} 
-				handleKeyCommand={handleKeyCommand}
-				keyBindingFn={getDefaultKeyBinding} 
-				onChange={updateCurrentCard} 
-			/>
+			<textarea id={id} className='editor-textarea' value={text} onChange={updateCurrentCard} />
 		</div>
 	);
 }

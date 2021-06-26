@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { isNull } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Navbar from 'components/navbar';
 import Controls from 'components/controls';
 import FlashcardSwitcher from 'components/flashcard-switcher';
+import FailedToLoadModal from 'components/modals/failed-to-load-modal';
 
 import { PlusInCircleIcon } from 'components/icons/icons';
-import { insertCard } from 'redux/action-creators/decks';
+import { putCard, setDecks } from 'redux/action-creators/decks';
 
 import './study.css';
 import { setCardNumber } from 'redux/action-creators/cardNumber';
@@ -24,18 +25,31 @@ export default function Study() {
 	// @desc : create a new card, store it in redux
 	const createCard = () => {
 		const emptyCard = { front: '', back: ''};
-		dispatch(insertCard(deckNumber, 0, emptyCard));
+		dispatch(putCard(deckNumber, 0, emptyCard));
 		dispatch(setCardNumber(0));
 	}
 
+	const [showFailModal, setShowFailModal] = useState(false);
+	const hideFailModal = () => setShowFailModal(false);
+
 	// get the user's deck
 	useEffect(() => {
-		if(user.isAuth) {
-			getDeck(username)
-			.then(console.log)
-			.catch(console.error)
+		const updateDecks = async () => {
+			if(user.isAuth) {
+				try {
+					const { data: decks, status } = await getDeck(username);
+					if(status === 200) {
+						dispatch(setDecks(decks));
+					} else {
+						throw new Error('Failed to load');
+					}
+				} catch(err) {
+					setShowFailModal(true);
+				}
+			}
 		}
-	}, [user.isAuth, username])
+		updateDecks();
+	}, [user.isAuth, username, dispatch])
 
 	// set the body to be appropriate
 	// if there's a selected deck and there's a card selected, render the flashcard switcher
@@ -60,6 +74,7 @@ export default function Study() {
 	return (
 		<>		
 			<Navbar />
+			<FailedToLoadModal failedData={'Decks'} show={showFailModal} onHide={hideFailModal} />
 			<div className='container-fluid d-lg-flex flex-row align-items-center justify-content-center align-items-center'>
 				{body}
 			</div>

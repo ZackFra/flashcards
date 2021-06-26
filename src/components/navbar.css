@@ -8,6 +8,11 @@
 	margin-right: auto;
 }
 
+.navbar-left-item {
+	padding: 0 0.125rem;
+	margin: auto;
+}
+
 .navbar-right {
 	margin-left: auto;
 }

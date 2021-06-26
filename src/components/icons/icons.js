@@ -4,8 +4,12 @@ import {
 	AiOutlineLeftCircle, 
 	AiOutlineRightCircle,
 	AiFillPlusCircle,
-	AiFillDelete
+	AiFillDelete,
+	AiFillSave
 } from 'react-icons/ai';
+import {
+	GiCardRandom,
+} from 'react-icons/gi';
 import './icons.css';
 
 export function FlashcardIcon(props) {
@@ -34,4 +38,12 @@ export function PlusInCircleIcon() {
 
 export function DeleteIcon() {
 	return <AiFillDelete className='delete-icon' /> 
+}
+
+export function SaveIcon() {
+	return <AiFillSave className='save-icon' />
+}
+
+export function ShuffleIcon() {
+	return <GiCardRandom className='shuffle-icon' />
 }
