@@ -15,9 +15,8 @@ const styles = {
 
 export default function Flashcard(props) {
 	
-	const { cardNumber, decks, deckNumber } = useSelector(state => state);
-	const currentDeck = decks[deckNumber];
-	const currentCard = currentDeck.cards[cardNumber];
+	const { cardNumber, displayDeck } = useSelector(state => state);
+	const currentCard = displayDeck[cardNumber];
 
 	return (
 		<div className='d-flex justify-content-center'>

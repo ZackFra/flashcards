@@ -9,13 +9,15 @@ import FailedToLoadModal from 'components/modals/failed-to-load-modal';
 
 import { PlusInCircleIcon } from 'components/icons/icons';
 import { putCard, setDecks } from 'redux/action-creators/decks';
+import { setCardNumber } from 'redux/action-creators/cardNumber';
+import { setDisplayDeck } from 'redux/action-creators/displayDeck';
 
 import './study.css';
-import { setCardNumber } from 'redux/action-creators/cardNumber';
 import { getDeck } from 'api';
+import store from 'redux/store';
 
 export default function Study() {
-	const { deckNumber, cardNumber, user } = useSelector(state => state);
+	const { deckNumber, cardNumber, user, decks } = useSelector(state => state);
 	const username = useSelector(state => state.user?.data?.username || null);
 	const deckSelected = deckNumber !== null;
 	const hasCard = !isNull(cardNumber);
@@ -25,12 +27,25 @@ export default function Study() {
 	// @desc : create a new card, store it in redux
 	const createCard = () => {
 		const emptyCard = { front: '', back: ''};
-		dispatch(putCard(deckNumber, 0, emptyCard));
+		const endOfDeck = decks[deckNumber].cards.length;
+		dispatch(putCard(deckNumber, endOfDeck, emptyCard));
 		dispatch(setCardNumber(0));
+		
+		// gotta grab the deck directly from the store to update this properly
+		dispatch(setDisplayDeck(store.getState().decks[deckNumber].cards));
 	}
 
 	const [showFailModal, setShowFailModal] = useState(false);
 	const hideFailModal = () => setShowFailModal(false);
+
+	useEffect(() => {
+		debugger
+		if(!isNull(deckNumber)) {
+			dispatch(setDisplayDeck(decks[deckNumber].cards));
+		} else {
+			dispatch(setDisplayDeck([]));
+		}
+	}, [decks, deckNumber, decks[deckNumber]?.cards.length, dispatch]);
 
 	// get the user's deck
 	useEffect(() => {

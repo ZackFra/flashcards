@@ -4,52 +4,15 @@ import { Button } from 'react-bootstrap';
 import { isNull } from 'lodash';
 
 import { incrementCardNumber, decrementCardNumber, setCardNumber } from 'redux/action-creators/cardNumber';
-import { putCard, deleteCard } from 'redux/action-creators/decks';
+import {  deleteCard } from 'redux/action-creators/decks';
+import LeftArrowButton from './flashcard-components/left-arrow';
+import RightArrowButton from './flashcard-components/right-arrow';
 
-import { LeftArrowCircleIcon, PlusInCircleIcon, RightArrowCircleIcon, DeleteIcon } from './icons/icons';
+import { DeleteIcon } from './icons/icons';
 import Flashcard from './flashcard-components/flashcard';
 
 import './flashcard-switcher.css';
 import VerifyDeleteModal from './modals/verify-delete-modal';
-
-function LeftArrowButton(props) {
-	return (
-		<button onClick={props.onClick} className='flashcard-switcher-arrow-button'>
-			<LeftArrowCircleIcon />
-		</button>
-	);
-}
-
-function RightArrowButton(props) {
-	const { cardNumber, deckNumber, decks } = useSelector(state => state);
-	const currentDeck = decks[deckNumber];
-
-	const dispatch = useDispatch();
-	const emptyCard = { front: '', back: ''};
-
-	// @desc : call the onCreate meta-function, then insert a card into the deck
-	const createCard = () => {
-		props.onCreate?.();
-		dispatch(putCard(deckNumber, cardNumber+1, emptyCard));
-		dispatch(incrementCardNumber());
-	}
-	
-	// if we're at the last card in the deck, present the create button
-	if(cardNumber === currentDeck.cards.length - 1) {
-		return (
-			<button onClick={createCard} className='flashcard-switcher-add-card-button'>
-				<PlusInCircleIcon />
-			</button>
-		)
-	}
-
-	// present the "next" button otherwise
-	return (
-		<button onClick={props.onClick} className='flashcard-switcher-arrow-button'>
-			<RightArrowCircleIcon />
-		</button>
-	);
-}
 
 function hasNextCard(cardNumber, deckLength) {
 	return cardNumber + 1 < deckLength;
@@ -60,8 +23,7 @@ function hasPrevCard(cardNumber) {
 }
 
 export default function FlashcardSwitcher() {
-	const { cardNumber, decks, deckNumber } = useSelector(state => state);
-	const currentDeck = decks[deckNumber];
+	const { cardNumber, deckNumber, displayDeck } = useSelector(state => state);
 
 	const dispatch = useDispatch();
 
@@ -91,21 +53,25 @@ export default function FlashcardSwitcher() {
 	}
 
 	// @desc : flip a card
-	const flip = () => {
+	// @e    : <event> can be used as event-listener
+	const flip = (e) => {
+		e?.stopPropagation();
 		setIsFlipped(!isFlipped);
 		reverseFocus();
 	}
 
 	/* for moving through a deck's cards */
 	
+	// @desc : switch to the next card
 	const nextCard = () => {
-		if(hasNextCard(cardNumber, currentDeck.cards.length)) {
+		if(hasNextCard(cardNumber, displayDeck.length)) {
 			setIsFlipped(false);
 			dispatch(incrementCardNumber());
 		}
 		focus();
 	}
 
+	// @desc : callback for the create button
 	const onCreate = () => {
 		setIsFlipped(false);
 		if(isFlipped) {
@@ -115,6 +81,7 @@ export default function FlashcardSwitcher() {
 		}
 	}
 	
+	// @desc : switch to previous card
 	const prevCard = () => {
 		if(hasPrevCard(cardNumber)) {
 			setIsFlipped(false);
@@ -122,6 +89,7 @@ export default function FlashcardSwitcher() {
 		}
 		focus();
 	}
+
 	// @desc : setup event-handler for flipping cards via keystroke
 	useEffect(() => {
 		const handleKeyPress = (e) => {
@@ -137,9 +105,18 @@ export default function FlashcardSwitcher() {
 				prevCard();
 			}
 		}
+
+		const handleClick = (e) => {
+			setIsFlipped(false);
+		}
+
+		document.addEventListener('click', handleClick);
 		document.addEventListener('keydown', handleKeyPress);
 		focus();
-		return () => document.removeEventListener('keydown', handleKeyPress);
+		return () => {
+			document.removeEventListener('keydown', handleKeyPress);
+			document.removeEventListener('click', handleClick);
+		}
 	}, [flip])
 
 	/* card deletion */
@@ -148,10 +125,11 @@ export default function FlashcardSwitcher() {
 	const spawnVerify = () => setShowVerifyModal(true);
 	const hideVerify = () =>setShowVerifyModal(false);
 
+	// @desc : delete the currently selected card
 	const deleteThisCard = () => {
-		if(currentDeck.cards.length === 1) {
+		if(displayDeck.length === 1) {
 			dispatch(setCardNumber(null));
-		} else if(currentDeck.cards.length-1 === cardNumber) {
+		} else if(displayDeck.length-1 === cardNumber) {
 			dispatch(decrementCardNumber());
 		}
 		dispatch(deleteCard(deckNumber, cardNumber));
@@ -167,7 +145,7 @@ export default function FlashcardSwitcher() {
 					</Button>
 				</div>
 				<p className='text-dark d-flex justify-content-end m-0'>
-					[{cardNumber+1}/{currentDeck.cards.length}]
+					[{cardNumber+1}/{displayDeck.length}]
 				</p>
 			</div>
 			<div className='flashcard-switcher-tool'>

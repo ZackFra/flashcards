@@ -9,6 +9,7 @@ import {
 } from 'react-icons/ai';
 import {
 	GiCardDiscard,
+	GiCardExchange,
 	GiCardRandom,
 } from 'react-icons/gi';
 import './icons.css';
@@ -51,4 +52,8 @@ export function ShuffleIcon() {
 
 export function RemoveIcon() {
 	return <GiCardDiscard className='remove-icon' />
+}
+
+export function ResetIcon() {
+	return <GiCardExchange className='reset-icon' />
 }

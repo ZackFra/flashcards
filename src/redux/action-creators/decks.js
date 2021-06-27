@@ -20,10 +20,6 @@ export function deleteCard(deckNumber, cardNumber) {
 	return { type: DELETE_CARD, payload: {deckNumber, cardNumber} };
 }
 
-export function shuffleDeck(deckNumber) {
-	return { type: SHUFFLE_DECK, payload: { deckNumber } }
-}
-
 export function setDecks(decks) {
 	return { type: SET_DECKS, payload: { decks } };
 }

@@ -20,3 +20,7 @@ export const DELETE_DECK = 'DELETE DECK';
 export const DELETE_CARD = 'DELETE CARD';
 export const SET_DECKS = 'SET DECKS';
 export const SHUFFLE_DECK = 'SHUFFLE DECK';
+
+/* display deck */
+export const REMOVE_FROM_DISPLAY_DECK = 'REMOVE FROM DISPLAY DECK';
+export const SET_DISPLAY_DECK = 'SET_DISPLAY_DECK'

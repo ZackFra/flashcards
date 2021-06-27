@@ -4,11 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { isNull } from 'lodash';
 
-import { SaveIcon, ShuffleIcon, RemoveIcon } from 'components/icons/icons';
+import { SaveIcon, ShuffleIcon, RemoveIcon, ResetIcon } from 'components/icons/icons';
 import { putDecks } from 'api';
 import SavingDataModal from 'components/modals/saving-data-modal';
-import { shuffleDeck } from 'redux/action-creators/decks';
-import { setCardNumber } from 'redux/action-creators/cardNumber';
+import { shuffleDeck } from 'redux/action-creators/displayDeck';
+import { decrementCardNumber, setCardNumber } from 'redux/action-creators/cardNumber';
+import { removeFromDisplayDeck, setDisplayDeck } from 'redux/action-creators/displayDeck';
 import FailedToSaveModal from 'components/modals/failed-to-save-modal';
 import LoginLogoutLink from 'components/login-logout-link';
 import store from 'redux/store';
@@ -17,17 +18,20 @@ import './navbar.css'
 export default function Navbar() {
 
 	const [showSaving, setShowSaving] = useState(false);
-	const { user, deckNumber, cardNumber, decks } = useSelector(state => state);
+	const { user, deckNumber, cardNumber, displayDeck, decks } = useSelector(state => state);
 	const dispatch = useDispatch();
 
 	const [showFailure, setShowFailure] = useState(false);
 	const hideFailModal = () => setShowFailure(false);
 
-	// temporarily removed cards
-	const [removedCards, setRemovedCards] = useState([]);
+	// @desc : remove the current card from display, but not from real deck
 	const removeCurrentCard = () => {
-		const currentCard = decks[deckNumber].cards[cardNumber];
-		setRemovedCards([...removedCards, currentCard]);
+		if(displayDeck.length === 1) {
+			dispatch(setCardNumber(null));
+		} else if(cardNumber === displayDeck.length - 1) {
+			dispatch(decrementCardNumber());
+		}
+		dispatch(removeFromDisplayDeck(cardNumber))
 	}
 	
 	// @desc : flash a modal on the screen while saving, save, then remove the modal
@@ -47,15 +51,24 @@ export default function Navbar() {
 	// @desc : shuffle a deck
 	const shuffle = () => {
 		if(!isNull(deckNumber) && !isNull(cardNumber)) {
-			dispatch(shuffleDeck(deckNumber));
+			dispatch(shuffleDeck());
 			dispatch(setCardNumber(0));
+		}
+	}
+
+	// @desc : set the display deck to the full deck
+	const resetDeck = () => {
+		if(!isNull(deckNumber)) {
+			dispatch(setCardNumber(0));
+			dispatch(setDisplayDeck(decks[deckNumber].cards));
 		}
 	}
 
 	// @desc : setup key handler for saving
 	useEffect(() => {
 		const handleKeyPress = async (e) => {
-			if(e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && user.isAuth) {
+			const ctrlKey = navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey
+			if(e.key === 's' && ctrlKey && user.isAuth) {
 				e.preventDefault();
 				await save();
 			}
@@ -68,6 +81,7 @@ export default function Navbar() {
 	let saveButton = undefined;
 	let studyButton = undefined;
 	let removeButton = undefined;
+	let resetButton = undefined;
 	if(user.isAuth) {
 		saveButton = (
 			<li className='nav-item navbar-left-item'>
@@ -92,6 +106,14 @@ export default function Navbar() {
 				</Button>
 			</li>
 		)
+
+		resetButton = (
+			<li className='nav-item navbar-left-item'>
+				<Button variant='primary' className='w-100 h-100' onClick={resetDeck}>
+					<ResetIcon />
+				</Button>
+			</li>
+		)
 	}
 
 	return (
@@ -107,6 +129,7 @@ export default function Navbar() {
 							{saveButton}
 							{studyButton}
 							{removeButton}
+							{resetButton}
 							<li className="nav-item navbar-left-item"> 
 								<Link className={`nav-link ${user.isAuth ? 'disabled' : ''}`} to='/'>Home</Link>
 							</li>

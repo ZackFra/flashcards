@@ -1,13 +1,15 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { setCardNumber } from 'redux/action-creators/cardNumber';
 import { setDeckNumber } from 'redux/action-creators/deckNumber';
+import { setDisplayDeck } from 'redux/action-creators/displayDeck';
 
 import { FlashcardIcon } from 'components/icons/icons';
 import './deck-option.css';
 
 export default function DeckOption({deck, deckNumber}) {
 	const dispatch = useDispatch();
+	const { decks } = useSelector(state => state);
 
 	const onClick = () => {
 		if(deck.cards.length > 0) {
@@ -16,6 +18,7 @@ export default function DeckOption({deck, deckNumber}) {
 			dispatch(setCardNumber(null));
 		}
 		dispatch(setDeckNumber(deckNumber));
+		dispatch(setDisplayDeck(decks[deckNumber].cards));
 	}
 	
 	return (
