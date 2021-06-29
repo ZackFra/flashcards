@@ -92,8 +92,8 @@ export default function FlashcardSwitcher() {
 
 	// @desc : setup event-handler for flipping cards via keystroke
 	useEffect(() => {
+		
 		const handleKeyPress = (e) => {
-
 			const TAB = 9;
 			const ctrlKey = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
 			if(e.keyCode === TAB) {

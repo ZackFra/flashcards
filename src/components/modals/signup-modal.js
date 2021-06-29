@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { Auth } from 'aws-amplify';
 
+import { putDecks } from 'api';
+
 const MESSAGE_TYPES = {
 	NONE: 0,
 	SUCCESS: 1,

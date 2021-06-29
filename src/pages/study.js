@@ -13,7 +13,7 @@ import { setCardNumber } from 'redux/action-creators/cardNumber';
 import { setDisplayDeck } from 'redux/action-creators/displayDeck';
 
 import './study.css';
-import { getDeck } from 'api';
+import { getDeck, putDecks } from 'api';
 import store from 'redux/store';
 
 export default function Study() {
@@ -39,7 +39,6 @@ export default function Study() {
 	const hideFailModal = () => setShowFailModal(false);
 
 	useEffect(() => {
-		debugger
 		if(!isNull(deckNumber)) {
 			dispatch(setDisplayDeck(decks[deckNumber].cards));
 		} else {
@@ -50,16 +49,27 @@ export default function Study() {
 	// get the user's deck
 	useEffect(() => {
 		const updateDecks = async () => {
+			debugger
 			if(user.isAuth) {
 				try {
-					const { data: decks, status } = await getDeck(username);
-					if(status === 200) {
-						dispatch(setDecks(decks));
+					const response = await getDeck(username);
+					if(response.status === 200) {
+						dispatch(setDecks(response.data));
 					} else {
 						throw new Error('Failed to load');
 					}
 				} catch(err) {
-					setShowFailModal(true);
+					// hacky hacky
+					if(err.response.status === 404) {
+						try {
+							await putDecks([]);
+							dispatch(setDecks([]));
+						} catch(err) {
+							setShowFailModal(true);
+						}
+					} else {
+						setShowFailModal(true);
+					}
 				}
 			}
 		}

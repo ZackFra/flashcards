@@ -82,6 +82,7 @@ export default function Navbar() {
 	let studyButton = undefined;
 	let removeButton = undefined;
 	let resetButton = undefined;
+	let deckName = undefined;
 	if(user.isAuth) {
 		saveButton = (
 			<li className='nav-item navbar-left-item'>
@@ -114,6 +115,14 @@ export default function Navbar() {
 				</Button>
 			</li>
 		)
+		
+		if(!isNull(deckNumber)) {
+			deckName = (
+				<li className='nav-item navbar-left-item text-light'>
+					Deck: {decks[deckNumber].name}
+				</li>
+			)
+		}
 	}
 
 	return (
@@ -130,9 +139,10 @@ export default function Navbar() {
 							{studyButton}
 							{removeButton}
 							{resetButton}
-							<li className="nav-item navbar-left-item"> 
+							{/* <li className="nav-item navbar-left-item"> 
 								<Link className={`nav-link ${user.isAuth ? 'disabled' : ''}`} to='/'>Home</Link>
-							</li>
+							</li> */}
+							{deckName}
 						</ul>
 
 						<ul className='navbar-nav navbar-right'>

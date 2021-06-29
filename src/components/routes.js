@@ -38,7 +38,7 @@ export default function Routes() {
 		<Router>
 			<Switch>
 				<Route exact path='/'>
-					<Redirect to='/study' />
+					{user.isAuth ? <Redirect to='/study' /> : <Redirect to='/login' />}
 				</Route>
 				<Route exact path='/login'>
 					{user.isAuth ? <Redirect to='/study' /> : <Login />}
